@@ -5,12 +5,14 @@ import datetime
 
 captions_history = []
 
+# This function generates a caption for the uploaded image and saves it with a timestamp
 def caption_and_save(image):
     caption = generate_caption(image)
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     captions_history.append((timestamp, caption))
     return caption
 
+# This function exports the captions history to a CSV file
 def export_captions():
     if not captions_history:
         return None
@@ -31,11 +33,13 @@ toggle_js = """
     root.style.setProperty('--text-color', '#e0e0e0');
     root.style.setProperty('--btn-bg', '#333');
     root.style.setProperty('--btn-text', 'white');
+    root.style.setProperty('--textbox-bg', '#222');
   } else {
     root.style.setProperty('--bg-color', 'white');
     root.style.setProperty('--text-color', '#111');
     root.style.setProperty('--btn-bg', '#ddd');
     root.style.setProperty('--btn-text', '#111');
+    root.style.setProperty('--textbox-bg', '#fff');
   }
 }
 """
@@ -56,8 +60,6 @@ body {
   padding: 0;
 }
 .gradio-container {
-  max-width: 600px;
-  margin: 2rem auto;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 0 15px rgb(0 0 0 / 0.1);
@@ -78,27 +80,29 @@ body {
 }
 .gr-textbox {
   font-size: 1.1rem;
+  color: var(--text-color);
   border-radius: 8px;
+  background-color: var(--textbox-bg);
 }
 .gr-image {
   border-radius: 12px;
   box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+  background-color: var(--textbox-bg);
+  border: 1px solid var(--btn-bg);
 }
 """
 
 with gr.Blocks(css=custom_css) as demo:
     gr.Markdown(
         """
-        <h1 style="text-align:center; font-weight: 700;">🖼️ St-ImageCaptioner</h1>
-        <p style="text-align:center; color: var(--text-color); font-weight: 400;">
-        Upload an image or take a photo with your camera.
-        </p>
+        <h1 style="text-align:center; font-weight: 700; color: var(--text-color);">🖼️ St-ImageCaptioner</h1>
+        <h3 style="text-align:center; font-weight: 400; color: var(--text-color);">Upload an image or take a photo with your camera.</h3>
         """
     )
 
     with gr.Row():
         with gr.Column(scale=1):
-            image_input = gr.Image(label="Take a photo or upload", type="pil", source="camera")
+            image_input = gr.Image(label="Take a photo or upload", type="pil")
             generate_button = gr.Button("✨ Generate Caption", elem_classes=["gr-button"])
             export_button = gr.Button("📤 Export Captions", elem_classes=["gr-button"])
             dark_toggle = gr.Button("🌓 Toggle Light/Dark Mode", elem_classes=["gr-button"])
